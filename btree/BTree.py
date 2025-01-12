@@ -15,14 +15,24 @@ class BTree:
             self.root = new_root
         self.root.insert_non_full(key)
 
-    def pretty(self, node=None, level=0, prefix="Root: "):
-      # Print the current node's keys
-      if node == None:
-          node = self.root
-      print(" " * (level * 4) + prefix + "[" + " | ".join(map(str, node.keys)) + "]")
-      if not node.is_leaf:
-          # Iterate through children, showing the branching structure
-          for i, child in enumerate(node.children):
-              child_prefix = f"Child-{i+1}: "
-              self.pretty(child, level + 1, prefix=child_prefix)
+    def delete(self, key):
+        if not self.root:
+            print("The tree is empty.")
+            return
 
+        self.root.delete(key)
+
+        # If the root becomes empty, replace it with its first child
+        if not self.root.keys and not self.root.is_leaf:
+            self.root = self.root.children[0]
+
+    def pretty(self, node=None, level=0, prefix="Root: "):
+        # Print the current node's keys
+        if node is None:
+            node = self.root
+        print(" " * (level * 4) + prefix + "[" + " | ".join(map(str, node.keys)) + "]")
+        if not node.is_leaf:
+            # Iterate through children, showing the branching structure
+            for i, child in enumerate(node.children):
+                child_prefix = f"Child-{i + 1}: "
+                self.pretty(child, level + 1, prefix=child_prefix)

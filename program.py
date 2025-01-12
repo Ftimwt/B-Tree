@@ -1,3 +1,5 @@
+import re
+
 from btree.BTree import BTree
 
 
@@ -7,8 +9,9 @@ def print_btree_pretty(node, level=0, prefix="Root: "):
     if not node.is_leaf:
         # Iterate through children, showing the branching structure
         for i, child in enumerate(node.children):
-            child_prefix = f"Child-{i+1}: "
+            child_prefix = f"Child-{i + 1}: "
             print_btree_pretty(child, level + 1, prefix=child_prefix)
+
 
 def print_btree(node, level=0):
     print(" " * (level * 4) + " | ".join(map(str, node.keys)))
@@ -17,15 +20,31 @@ def print_btree(node, level=0):
             print_btree(child, level + 1)
 
 
-
 if __name__ == "__main__":
-    max = int(input("Enter maximum degree: "))
+    maxDeg = int(input("Enter maximum degree: "))
 
-    btree = BTree(max)
+    btree = BTree(maxDeg)
 
-    keys = input("Enter numbers: (separate with comma) ").split(',')
+    print("""
+Available commands:
+add %d
+delete %d
+""")
 
-    for key in keys:
-        btree.insert(int(key))
+    while True:
+        key = input("cmd: ").lower()
+        if key == "exit":
+            print("bye")
+            break
 
-    btree.pretty()
+        values = re.findall(r'(add|delete) (\d+)', key)
+        if len(values) < 1:
+            continue
+        values = values[0]
+
+        if values[0] == "add":
+            btree.insert(int(values[1]))
+        if values[0] == "delete":
+            btree.delete(int(values[1]))
+
+        btree.pretty()
